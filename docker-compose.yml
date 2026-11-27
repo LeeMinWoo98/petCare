@@ -1,0 +1,43 @@
+services:
+  mariadb:
+    image: mariadb:11.4
+    container_name: petcare-mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-petcare_root}
+      MARIADB_DATABASE: ${DB_NAME:-petcare}
+      MARIADB_USER: ${DB_USER:-petcare}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-petcare1234}
+      TZ: Asia/Seoul
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-time-zone=+09:00
+    volumes:
+      - petcare_mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: petcare-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - petcare_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  petcare_mariadb_data:
+  petcare_redis_data:
