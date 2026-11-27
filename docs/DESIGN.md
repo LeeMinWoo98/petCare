@@ -444,6 +444,15 @@
 npm --prefix petCare_web run build
 ```
 
+#### Docker / MariaDB 없이 즉시 체험 실행 (`local-h2` 프로필, 재시작 시 데이터 초기화)
+```powershell
+# 1. 백엔드 실행 (H2 인메모리 DB + InMemory 캐시/락/SSE)
+.\petCare_serv\gradlew.bat -p petCare_serv bootRun --args='--spring.profiles.active=local-h2'
+
+# 2. 프론트엔드 실행 (http://localhost:5173)
+npm --prefix petCare_web run dev
+```
+
 #### Docker Desktop 설치 후 전체 로컬 실행 (MariaDB + Redis + Backend + Frontend)
 ```powershell
 # 1. MariaDB + Redis 컨테이너 기동 (프로젝트 루트)
